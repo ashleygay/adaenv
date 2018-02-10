@@ -11,7 +11,7 @@ TOOLCHAIN_DIR=.toolchains
 download()
 {
 	echo "Checking if $1 need downloading"
-	if [ ! -f "$TOOLCHAIN_DIR/$1" ]; then
+	if [ ! -f "$TOOLCHAIN_DIR/$1" ] && [ ! -f "$TOOLCHAIN_DIR/$1.tar" ]; then
 		echo "Downloading $1 in toolchain directory"
 		wget $2 -O $TOOLCHAIN_DIR/$1
 	fi
@@ -21,11 +21,11 @@ untar ()
 {
 	echo "Checking if $TOOLCHAIN_DIR/$1 need decompressing"
 	DIR="$TOOLCHAIN_DIR/$1"
-	if [ ! -f "${DIR%.tar}" ]; then
-		mv $DIR ${DIR%.tar}
+	if [ ! -f "$DIR.tar" ]; then
+		mv $DIR $DIR.tar
 		echo "Decompressing $TOOLCHAIN_DIR/$1"
 		cd $TOOLCHAIN_DIR
-		tar -xvf ${1%.tar}
+		tar -xvf $1.tar
 		cd ..
 	fi
 }
@@ -51,15 +51,6 @@ CHOICE=$(dialog --clear \
                 "${OPTIONS[@]}" \
                 2>&1 >/dev/tty)
 
-CUSTOM_TOOLCHAIN_MENU=$(dialog --clear \
-                --backtitle "$BACKTITLE" \
-                --title "$TITLE" \
-                --menu "$MENU" \
-                $HEIGHT $WIDTH $CHOICE_HEIGHT \
-                "${OPTIONS[@]}" \
-                2>&1 >/dev/tty)
-
-
 if [ ! -d "${TOOLCHAIN_DIR:+$TOOLCHAIN_DIR/}" ]; then
 	mkdir -p $TOOLCHAIN_DIR
 fi
@@ -81,4 +72,3 @@ case $CHOICE in
 		echo "You chose Option 3"
 		;;
 esac
-#clear
