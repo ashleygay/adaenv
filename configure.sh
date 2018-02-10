@@ -25,7 +25,7 @@ untar ()
 		mv $DIR $DIR.tar
 		echo "Decompressing $TOOLCHAIN_DIR/$1"
 		cd $TOOLCHAIN_DIR
-		tar -xvf $1.tar
+		mkdir $1_directory && tar -xvf $1.tar -C $1_directory --strip-components 1
 		cd ..
 	fi
 }
@@ -43,6 +43,10 @@ OPTIONS=(1 "GNAT arm"
          2 "GNAT x86"
          3 "Custom toolchain")
 
+if [ ! -d "${TOOLCHAIN_DIR:+$TOOLCHAIN_DIR/}" ]; then
+	mkdir -p $TOOLCHAIN_DIR
+fi
+
 CHOICE=$(dialog --clear \
                 --backtitle "$BACKTITLE" \
                 --title "$TITLE" \
@@ -51,24 +55,14 @@ CHOICE=$(dialog --clear \
                 "${OPTIONS[@]}" \
                 2>&1 >/dev/tty)
 
-if [ ! -d "${TOOLCHAIN_DIR:+$TOOLCHAIN_DIR/}" ]; then
-	mkdir -p $TOOLCHAIN_DIR
-fi
-
 clear
 
-case $CHOICE in
-        1)
-		clear
-		download ${TOOLCHAINS[0]} ${TOOLCHAINS_URL[0]}
-		untar ${TOOLCHAINS[0]}
-		;;
-        2)
-		clear
-		download ${TOOLCHAINS[1]} ${TOOLCHAINS_URL[1]}
-		untar ${TOOLCHAINS[1]}
-		;;
-        3)
-		echo "You chose Option 3"
-		;;
-esac
+if [ $CHOICE -lt 3 ]; then
+	download ${TOOLCHAINS[(($CHOICE - 1))]} ${TOOLCHAINS_URL[(($CHOICE - 1))]}
+	untar ${TOOLCHAINS[(($CHOICE - 1))]}
+	echo "export __toolchain__=\"$TOOLCHAIN_DIR/${TOOLCHAINS[(($CHOICE - 1))]}_directory\"" > variables.sh
+	echo "export __project__=" > variables.sh
+else #We chose a custom toolchain
+	echo 'Not yet implemented'
+fi
+

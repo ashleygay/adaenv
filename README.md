@@ -12,3 +12,4 @@
 + Tools required:
 	* dialog 
 	* bash (or equivalent)
+	* docker
