@@ -52,7 +52,8 @@ RUN apt-get install -y git && \
     apt-get install -y cmake && \
     apt-get install -y diffstat texinfo gawk chrpath wget cpio && \
     apt-get install -y python python-dev python-pip python-virtualenv && \
-    apt-get install -y strace
+    apt-get install -y strace &&\
+    apt-get install -y libgmp-dev
 
 # Set the locale
 RUN locale-gen en_US.UTF-8
