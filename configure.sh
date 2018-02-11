@@ -7,6 +7,7 @@ declare -a TOOLCHAINS_URL=(mirrors.cdn.adacore.com/art/591c6413c7a447af2deed0e3\
 
 TOOLCHAIN_DIR=.toolchains
 
+__PROJECT__=https://github.com/corentingay/templates2ada.git
 
 download()
 {
@@ -60,8 +61,23 @@ clear
 if [ $CHOICE -lt 3 ]; then
 	download ${TOOLCHAINS[(($CHOICE - 1))]} ${TOOLCHAINS_URL[(($CHOICE - 1))]}
 	untar ${TOOLCHAINS[(($CHOICE - 1))]}
-	echo "export __toolchain__=\"$TOOLCHAIN_DIR/${TOOLCHAINS[(($CHOICE - 1))]}_directory\"" > variables.sh
-	echo "export __project__=" > variables.sh
+	echo "export __toolchain__=$TOOLCHAIN_DIR/${TOOLCHAINS[(($CHOICE - 1))]}_directory" > .variables.sh
+	echo "export __PROJECT__=$__PROJECT__" >> .variables.sh
+	if [ ! -d "project" ]; then
+		git clone $__PROJECT__ project
+		cp Dockerfile project
+	else #Do we overwrite the project file ?
+		read -p "Do yout want to overwrite the project directory?(y/n)" -n 1 -r
+		printf "\n"
+		if [[ $REPLY =~ ^[Yy]$ ]]
+		then
+			#do stuff here
+			rm -rf project
+			git clone $__PROJECT__ project
+			cp Dockerfile project
+		fi
+	fi
+
 else #We chose a custom toolchain
 	echo 'Not yet implemented'
 fi

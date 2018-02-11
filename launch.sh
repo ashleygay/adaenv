@@ -1,12 +1,9 @@
 #!/bin/bash
 
 CUR_PATH=`pwd`
-source $CUR_PATH/variables.sh
+source $CUR_PATH/.variables.sh
 
 CUR_PATH=`pwd`
-
-git clone $__project__ project
-cp Dockerfile project
 
 # Setup and build the container here
 {
@@ -20,7 +17,7 @@ cp Dockerfile project
 {
 	docker run -e DISPLAY=$DISPLAY\
 	-v /tmp/.X11-unix:/tmp/.X11-unix \
-	-v ./$__toolchain__/:/usr/gnat/ \
+	-v $CUR_PATH/$__toolchain__/:/usr/gnat/ \
 	-v $CUR_PATH/project:/home/gps/ada/ \
 	-v ~/.vimrc:/home/gps/.vimrc \
 	-t -i ada:latest
