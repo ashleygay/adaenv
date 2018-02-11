@@ -9,6 +9,8 @@ TOOLCHAIN_DIR=.toolchains
 
 __PROJECT__=https://github.com/corentingay/templates2ada.git
 
+PROJECT_DIR=project
+
 download()
 {
 	echo "Checking if $1 need downloading"
@@ -29,6 +31,13 @@ untar ()
 		mkdir $1_directory && tar -xvf $1.tar -C $1_directory --strip-components 1
 		cd ..
 	fi
+}
+
+setup_project()
+{
+	rm -rf $PROJECT_DIR
+	git clone $__PROJECT__ $PROJECT_DIR
+	cp Dockerfile $PROJECT_DIR
 }
 
 
@@ -64,17 +73,13 @@ if [ $CHOICE -lt 3 ]; then
 	echo "export __toolchain__=$TOOLCHAIN_DIR/${TOOLCHAINS[(($CHOICE - 1))]}_directory" > .variables.sh
 	echo "export __PROJECT__=$__PROJECT__" >> .variables.sh
 	if [ ! -d "project" ]; then
-		git clone $__PROJECT__ project
-		cp Dockerfile project
+		setup_project
 	else #Do we overwrite the project file ?
 		read -p "Do yout want to overwrite the project directory?(y/n)" -n 1 -r
 		printf "\n"
 		if [[ $REPLY =~ ^[Yy]$ ]]
 		then
-			#do stuff here
-			rm -rf project
-			git clone $__PROJECT__ project
-			cp Dockerfile project
+			setup_project
 		fi
 	fi
 
