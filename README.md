@@ -13,3 +13,5 @@
 	* dialog 
 	* bash (or equivalent)
 	* docker
+
+To change the project used change the __PROJECT__ variable in configure.sh
