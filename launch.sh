@@ -3,12 +3,11 @@
 CUR_PATH=`pwd`
 source $CUR_PATH/.variables.sh
 
-CUR_PATH=`pwd`
-
 # Setup and build the container here
 {
 	xhost +local:docker
-	docker build -t ada project/
+	cp Dockerfile project/Dockerfile
+	docker build -t ada project
 }
 
 # We forward the X server so that the container can use a GUI
